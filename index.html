@@ -92,6 +92,78 @@
             color: white;
         }
 
+        /* Настройки режима обучения */
+        .learning-settings {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .learning-settings h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .direction-selector, .order-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .direction-btn, .order-btn {
+            padding: 10px 20px;
+            background-color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .direction-btn:hover, .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .direction-btn.active, .order-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .order-btn.random.active {
+            background-color: #9b59b6;
+        }
+
+        .shuffle-btn {
+            padding: 10px 20px;
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(155, 89, 182, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .shuffle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+            background-color: #8e44ad;
+        }
+
         /* Режим обучения - одна карточка */
         .learning-mode {
             display: none;
@@ -176,6 +248,7 @@
             font-size: 2.2rem;
             font-weight: bold;
             margin-bottom: 15px;
+            text-align: center;
         }
 
         .pronunciation {
@@ -199,6 +272,7 @@
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 20px;
+            text-align: center;
         }
 
         .example {
@@ -219,6 +293,22 @@
 
         .card-back .card-hint {
             color: #bdc3c7;
+        }
+
+        .direction-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        .card-back .direction-indicator {
+            color: #bdc3c7;
+            background-color: rgba(0, 0, 0, 0.2);
         }
 
         .controls {
@@ -371,12 +461,12 @@
                 flex-wrap: wrap;
             }
             
-            .mode-selector, .filter-controls {
+            .mode-selector, .direction-selector, .order-selector {
                 flex-direction: column;
                 align-items: center;
             }
             
-            .mode-btn, .filter-btn {
+            .mode-btn, .direction-btn, .order-btn {
                 width: 90%;
             }
         }
@@ -405,7 +495,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-language"></i> Английские слова для изучения</h1>
-            <p class="subtitle">Изучайте слова по одной карточке или просматривайте все сразу</p>
+            <p class="subtitle">Тренируйтесь в разных направлениях и режимах</p>
             <div class="stats">
                 <div class="stat-item"><i class="fas fa-book"></i> <span id="total-cards">25</span> слов</div>
                 <div class="stat-item"><i class="fas fa-eye"></i> <span id="current-card">1</span>/<span id="total-cards2">25</span></div>
@@ -418,10 +508,41 @@
             <button class="mode-btn" id="all-cards-btn"><i class="fas fa-th-large"></i> Все карточки</button>
         </div>
 
+        <!-- Настройки режима обучения -->
+        <div class="learning-settings" id="learning-settings">
+            <h3><i class="fas fa-cog"></i> Настройки обучения</h3>
+            
+            <div class="direction-selector">
+                <button class="direction-btn active" data-direction="ru-en">
+                    <i class="fas fa-arrow-right"></i> RU → EN
+                </button>
+                <button class="direction-btn" data-direction="en-ru">
+                    <i class="fas fa-arrow-left"></i> EN → RU
+                </button>
+                <button class="direction-btn" data-direction="mixed">
+                    <i class="fas fa-random"></i> Смешанный
+                </button>
+            </div>
+            
+            <div class="order-selector">
+                <button class="order-btn active" data-order="sequential">
+                    <i class="fas fa-sort-amount-down"></i> По порядку
+                </button>
+                <button class="order-btn random" data-order="random">
+                    <i class="fas fa-random"></i> Случайный
+                </button>
+            </div>
+            
+            <button class="shuffle-btn" id="shuffle-btn">
+                <i class="fas fa-random"></i> Перемешать карточки
+            </button>
+        </div>
+
         <!-- Режим обучения (по одной карточке) -->
         <div class="learning-mode active" id="learning-mode">
             <div class="progress-info">
                 Карточка <span id="current-card-num">1</span> из <span id="total-cards-num">25</span>
+                • <span id="direction-info">RU → EN</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill"></div>
@@ -429,14 +550,16 @@
             
             <div class="card-container">
                 <div class="card" id="main-card">
+                    <div class="direction-indicator" id="front-direction">RU</div>
                     <div class="card-front">
-                        <div class="word" id="card-word">barrack</div>
-                        <div class="pronunciation" id="card-pronunciation">/bærək/</div>
-                        <div class="part-of-speech" id="card-pos"><i class="fas fa-landmark"></i> noun</div>
+                        <div class="word" id="card-word">казарма</div>
+                        <div class="part-of-speech" id="card-pos"><i class="fas fa-landmark"></i> существительное</div>
                         <div class="card-hint">Нажмите на карточку, чтобы увидеть перевод</div>
                     </div>
                     <div class="card-back">
-                        <div class="translation" id="card-translation">казарма</div>
+                        <div class="direction-indicator" id="back-direction">EN</div>
+                        <div class="translation" id="card-translation">barrack</div>
+                        <div class="pronunciation" id="card-pronunciation">/bærək/</div>
                         <div class="part-of-speech" id="card-pos-back"><i class="fas fa-landmark"></i> noun</div>
                         <div class="example" id="card-example"></div>
                         <div class="card-hint">Нажмите на карточку, чтобы вернуться</div>
@@ -474,9 +597,11 @@
 
         <div class="instructions">
             <h2><i class="fas fa-info-circle"></i> Как использовать</h2>
-            <p><strong>Режим обучения:</strong> Изучайте слова по одной карточке. Переверните карточку, чтобы увидеть перевод, затем нажмите "Следующая".</p>
-            <p><strong>Режим всех карточек:</strong> Просматривайте все карточки сразу, фильтруйте по категориям.</p>
-            <p>Старайтесь запомнить перевод слова перед тем, как перевернуть карточку.</p>
+            <p><strong>RU → EN:</strong> На русском слово, на обороте - английский перевод</p>
+            <p><strong>EN → RU:</strong> На английском слово, на обороте - русский перевод</p>
+            <p><strong>Смешанный:</strong> Карточки чередуются в случайном порядке</p>
+            <p><strong>Случайный порядок:</strong> Карточки перемешиваются</p>
+            <p>Нажимайте на карточку или кнопку "Перевернуть" чтобы увидеть ответ</p>
         </div>
 
         <footer>
@@ -672,7 +797,10 @@
             // Переменные для режима обучения
             let currentCardIndex = 0;
             let flippedCount = 0;
-            const totalCards = wordsData.length;
+            let currentDirection = 'ru-en'; // 'ru-en', 'en-ru', 'mixed'
+            let currentOrder = 'sequential'; // 'sequential', 'random'
+            let currentWordList = [...wordsData];
+            let isMixedModeCurrentCardRu = true; // Для смешанного режима
             
             // Элементы DOM
             const mainCard = document.getElementById('main-card');
@@ -686,14 +814,24 @@
             const currentCardElement = document.getElementById('current-card');
             const totalCardsElement = document.getElementById('total-cards');
             const totalCardsElement2 = document.getElementById('total-cards2');
+            const directionInfo = document.getElementById('direction-info');
+            const frontDirection = document.getElementById('front-direction');
+            const backDirection = document.getElementById('back-direction');
+            const shuffleBtn = document.getElementById('shuffle-btn');
             
             // Элементы для переключения режимов
             const learningModeBtn = document.getElementById('learning-mode-btn');
             const allCardsBtn = document.getElementById('all-cards-btn');
             const learningMode = document.getElementById('learning-mode');
             const allCardsMode = document.getElementById('all-cards-mode');
+            const learningSettings = document.getElementById('learning-settings');
+            
+            // Кнопки направления и порядка
+            const directionButtons = document.querySelectorAll('.direction-btn');
+            const orderButtons = document.querySelectorAll('.order-btn');
             
             // Обновляем общую информацию
+            const totalCards = wordsData.length;
             totalCardsElement.textContent = totalCards;
             totalCardsElement2.textContent = totalCards;
             totalCardsNum.textContent = totalCards;
@@ -703,25 +841,63 @@
             
             // Функция обновления карточки
             function updateCard() {
-                const wordData = wordsData[currentCardIndex];
+                const wordData = currentWordList[currentCardIndex];
+                
+                // Определяем, что показывать на лицевой и обратной стороне
+                let frontText, backText, frontPos, backPos, pronunciation, example;
+                let frontLang, backLang;
+                
+                // Для смешанного режима чередуем направления
+                let actualDirection = currentDirection;
+                if (currentDirection === 'mixed') {
+                    actualDirection = isMixedModeCurrentCardRu ? 'ru-en' : 'en-ru';
+                }
+                
+                if (actualDirection === 'ru-en') {
+                    // Русский -> Английский
+                    frontText = wordData.translation;
+                    backText = wordData.word;
+                    frontPos = getRussianPartOfSpeech(wordData.partOfSpeech);
+                    backPos = wordData.partOfSpeech;
+                    pronunciation = wordData.pronunciation;
+                    example = wordData.example || '';
+                    frontLang = 'RU';
+                    backLang = 'EN';
+                } else {
+                    // Английский -> Русский
+                    frontText = wordData.word;
+                    backText = wordData.translation;
+                    frontPos = wordData.partOfSpeech;
+                    backPos = getRussianPartOfSpeech(wordData.partOfSpeech);
+                    pronunciation = wordData.pronunciation;
+                    example = wordData.example || '';
+                    frontLang = 'EN';
+                    backLang = 'RU';
+                }
                 
                 // Обновляем текст на карточке
-                document.getElementById('card-word').textContent = wordData.word;
-                document.getElementById('card-pronunciation').textContent = wordData.pronunciation;
-                document.getElementById('card-translation').textContent = wordData.translation;
-                document.getElementById('card-example').textContent = wordData.example || '';
+                document.getElementById('card-word').textContent = frontText;
+                document.getElementById('card-translation').textContent = backText;
+                document.getElementById('card-pronunciation').textContent = pronunciation;
+                document.getElementById('card-example').textContent = example;
                 
                 // Определяем иконку в зависимости от части речи
-                let icon = 'fas fa-font';
-                let posText = wordData.partOfSpeech;
-                if (wordData.partOfSpeech === 'noun') icon = 'fas fa-landmark';
-                if (wordData.partOfSpeech === 'verb') { icon = 'fas fa-bolt'; posText = 'verb'; }
-                if (wordData.partOfSpeech === 'adjective') { icon = 'fas fa-palette'; posText = 'adjective'; }
-                if (wordData.partOfSpeech === 'adverb') { icon = 'fas fa-tachometer-alt'; posText = 'adverb'; }
-                if (wordData.partOfSpeech === 'phrase') icon = 'fas fa-quote-right';
+                let icon = getIconForPartOfSpeech(wordData.partOfSpeech);
                 
-                document.getElementById('card-pos').innerHTML = `<i class="${icon}"></i> ${posText}`;
-                document.getElementById('card-pos-back').innerHTML = `<i class="${icon}"></i> ${posText}`;
+                document.getElementById('card-pos').innerHTML = `<i class="${icon}"></i> ${frontPos}`;
+                document.getElementById('card-pos-back').innerHTML = `<i class="${icon}"></i> ${backPos}`;
+                
+                // Обновляем индикаторы направления
+                frontDirection.textContent = frontLang;
+                backDirection.textContent = backLang;
+                
+                // Обновляем информацию о направлении
+                let directionText = '';
+                if (currentDirection === 'ru-en') directionText = 'RU → EN';
+                else if (currentDirection === 'en-ru') directionText = 'EN → RU';
+                else directionText = 'Смешанный режим';
+                
+                directionInfo.textContent = directionText;
                 
                 // Сбрасываем переворот карточки
                 mainCard.classList.remove('flipped');
@@ -737,6 +913,57 @@
                 // Обновляем состояние кнопок
                 prevBtn.disabled = currentCardIndex === 0;
                 nextBtn.disabled = currentCardIndex === totalCards - 1;
+            }
+            
+            // Функция для получения русской части речи
+            function getRussianPartOfSpeech(englishPos) {
+                const translations = {
+                    'noun': 'существительное',
+                    'verb': 'глагол',
+                    'adjective': 'прилагательное',
+                    'adverb': 'наречие',
+                    'phrase': 'фраза'
+                };
+                return translations[englishPos] || englishPos;
+            }
+            
+            // Функция для получения иконки для части речи
+            function getIconForPartOfSpeech(pos) {
+                if (pos === 'noun') return 'fas fa-landmark';
+                if (pos === 'verb') return 'fas fa-bolt';
+                if (pos === 'adjective') return 'fas fa-palette';
+                if (pos === 'adverb') return 'fas fa-tachometer-alt';
+                if (pos === 'phrase') return 'fas fa-quote-right';
+                return 'fas fa-font';
+            }
+            
+            // Функция для перемешивания массива (алгоритм Фишера-Йетса)
+            function shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+            
+            // Функция для применения выбранного порядка
+            function applyOrder() {
+                if (currentOrder === 'sequential') {
+                    // Восстанавливаем оригинальный порядок
+                    currentWordList = [...wordsData];
+                } else {
+                    // Перемешиваем карточки
+                    currentWordList = shuffleArray([...wordsData]);
+                }
+                
+                // Сбрасываем индекс и обновляем карточку
+                currentCardIndex = 0;
+                
+                // Для смешанного режима сбрасываем флаг
+                isMixedModeCurrentCardRu = Math.random() > 0.5;
+                
+                updateCard();
             }
             
             // Обработчики событий для карточки
@@ -765,6 +992,12 @@
             prevBtn.addEventListener('click', function() {
                 if (currentCardIndex > 0) {
                     currentCardIndex--;
+                    
+                    // Для смешанного режима меняем направление
+                    if (currentDirection === 'mixed') {
+                        isMixedModeCurrentCardRu = !isMixedModeCurrentCardRu;
+                    }
+                    
                     updateCard();
                 }
             });
@@ -772,8 +1005,75 @@
             nextBtn.addEventListener('click', function() {
                 if (currentCardIndex < totalCards - 1) {
                     currentCardIndex++;
+                    
+                    // Для смешанного режима меняем направление
+                    if (currentDirection === 'mixed') {
+                        isMixedModeCurrentCardRu = !isMixedModeCurrentCardRu;
+                    }
+                    
                     updateCard();
                 }
+            });
+            
+            // Обработчики для кнопок направления
+            directionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Убираем активный класс у всех кнопок
+                    directionButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+                    
+                    currentDirection = this.getAttribute('data-direction');
+                    
+                    // Сбрасываем индекс для смешанного режима
+                    if (currentDirection === 'mixed') {
+                        isMixedModeCurrentCardRu = Math.random() > 0.5;
+                    }
+                    
+                    // Обновляем карточку
+                    updateCard();
+                });
+            });
+            
+            // Обработчики для кнопок порядка
+            orderButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Убираем активный класс у всех кнопок
+                    orderButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+                    
+                    currentOrder = this.getAttribute('data-order');
+                    
+                    // Применяем выбранный порядок
+                    applyOrder();
+                });
+            });
+            
+            // Обработчик для кнопки перемешивания
+            shuffleBtn.addEventListener('click', function() {
+                // Перемешиваем карточки
+                currentWordList = shuffleArray([...currentWordList]);
+                
+                // Сбрасываем индекс
+                currentCardIndex = 0;
+                
+                // Для смешанного режима сбрасываем флаг
+                if (currentDirection === 'mixed') {
+                    isMixedModeCurrentCardRu = Math.random() > 0.5;
+                }
+                
+                // Обновляем карточку
+                updateCard();
+                
+                // Визуальная обратная связь
+                this.innerHTML = '<i class="fas fa-check"></i> Карточки перемешаны!';
+                this.style.backgroundColor = '#2ecc71';
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-random"></i> Перемешать карточки';
+                    this.style.backgroundColor = '#9b59b6';
+                }, 1500);
             });
             
             // Обработчики для переключения режимов
@@ -782,6 +1082,7 @@
                 allCardsBtn.classList.remove('active');
                 learningMode.classList.add('active');
                 allCardsMode.classList.remove('active');
+                learningSettings.style.display = 'block';
             });
             
             allCardsBtn.addEventListener('click', function() {
@@ -789,6 +1090,7 @@
                 learningModeBtn.classList.remove('active');
                 allCardsMode.classList.add('active');
                 learningMode.classList.remove('active');
+                learningSettings.style.display = 'none';
                 renderAllCards(wordsData);
             });
             
@@ -804,25 +1106,19 @@
                     card.className = 'small-card';
                     
                     // Определяем иконку в зависимости от части речи
-                    let icon = 'fas fa-font';
-                    let posText = wordData.partOfSpeech;
-                    if (wordData.partOfSpeech === 'noun') icon = 'fas fa-landmark';
-                    if (wordData.partOfSpeech === 'verb') { icon = 'fas fa-bolt'; posText = 'verb'; }
-                    if (wordData.partOfSpeech === 'adjective') { icon = 'fas fa-palette'; posText = 'adjective'; }
-                    if (wordData.partOfSpeech === 'adverb') { icon = 'fas fa-tachometer-alt'; posText = 'adverb'; }
-                    if (wordData.partOfSpeech === 'phrase') icon = 'fas fa-quote-right';
+                    let icon = getIconForPartOfSpeech(wordData.partOfSpeech);
                     
                     card.innerHTML = `
                         <div class="card">
                             <div class="card-front">
                                 <div class="word">${wordData.word}</div>
                                 <div class="pronunciation">${wordData.pronunciation}</div>
-                                <div class="part-of-speech"><i class="${icon}"></i> ${posText}</div>
+                                <div class="part-of-speech"><i class="${icon}"></i> ${wordData.partOfSpeech}</div>
                                 <div class="card-hint">Нажмите, чтобы увидеть перевод</div>
                             </div>
                             <div class="card-back">
                                 <div class="translation">${wordData.translation}</div>
-                                <div class="part-of-speech"><i class="${icon}"></i> ${posText}</div>
+                                <div class="part-of-speech"><i class="${icon}"></i> ${getRussianPartOfSpeech(wordData.partOfSpeech)}</div>
                                 ${wordData.example ? `<div class="example">${wordData.example}</div>` : ''}
                                 <div class="card-hint">Нажмите, чтобы вернуться</div>
                             </div>
