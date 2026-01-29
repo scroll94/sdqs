@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточки для изучения английских слов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .stat-item i {
+            margin-right: 8px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 12px 25px;
+            background-color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .filter-btn.active {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .card-front {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        .card-back {
+            background-color: #2c3e50;
+            color: white;
+            transform: rotateY(180deg);
+            text-align: center;
+        }
+
+        .word {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .pronunciation {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .part-of-speech {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .translation {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .example {
+            font-size: 1rem;
+            font-style: italic;
+            color: #ecf0f1;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.9rem;
+            color: #95a5a6;
+        }
+
+        .card-back .hint {
+            color: #bdc3c7;
+        }
+
+        .instructions {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .instructions h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .instructions p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filter-btn {
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> Английские слова для изучения</h1>
+            <p class="subtitle">Кликайте на карточки, чтобы увидеть перевод и подробности</p>
+            <div class="stats">
+                <div class="stat-item"><i class="fas fa-book"></i> 25 слов</div>
+                <div class="stat-item"><i class="fas fa-sync-alt"></i> <span id="flipped-count">0</span> перевернуто</div>
+                <div class="stat-item"><i class="fas fa-filter"></i> 4 категории</div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <button class="filter-btn active" data-filter="all">Все слова</button>
+            <button class="filter-btn" data-filter="noun">Существительные</button>
+            <button class="filter-btn" data-filter="verb">Глаголы</button>
+            <button class="filter-btn" data-filter="adj">Прилагательные</button>
+            <button class="filter-btn" data-filter="adv">Наречия</button>
+        </div>
+
+        <div class="cards-grid" id="cards-container">
+            <!-- Карточки будут сгенерированы с помощью JavaScript -->
+        </div>
+
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> Как использовать карточки</h2>
+            <p>1. Нажмите на любую карточку, чтобы перевернуть её и увидеть перевод</p>
+            <p>2. Используйте кнопки фильтра, чтобы просматривать слова по категориям</p>
+            <p>3. Старайтесь запомнить перевод слова перед тем, как перевернуть карточку</p>
+            <p>4. Для лучшего запоминания повторяйте слова регулярно</p>
+        </div>
+
+        <footer>
+            <p>Сайт с карточками для изучения английских слов &copy; 2023</p>
+            <p>Создано для удобного запоминания лексики</p>
+        </footer>
+    </div>
+
+    <script>
+        // Данные слов
+        const wordsData = [
+            {
+                word: "barrack",
+                pronunciation: "/bærək/",
+                partOfSpeech: "noun",
+                translation: "казарма",
+                category: "noun"
+            },
+            {
+                word: "basin",
+                pronunciation: "/beisn/",
+                partOfSpeech: "noun",
+                translation: "водоем",
+                category: "noun"
+            },
+            {
+                word: "broom",
+                pronunciation: "/brum/",
+                partOfSpeech: "noun",
+                translation: "метла",
+                category: "noun"
+            },
+            {
+                word: "celebrity",
+                pronunciation: "/sılebriti/",
+                partOfSpeech: "noun",
+                translation: "знаменитость",
+                category: "noun"
+            },
+            {
+                word: "consult",
+                pronunciation: "/kansalt/",
+                partOfSpeech: "verb",
+                translation: "консультироваться",
+                category: "verb"
+            },
+            {
+                word: "crawl",
+                pronunciation: "/kral/",
+                partOfSpeech: "verb",
+                translation: "ползти",
+                category: "verb"
+            },
+            {
+                word: "dedicate",
+                pronunciation: "/dedikeit/",
+                partOfSpeech: "verb",
+                translation: "посвящать, отдавать много времени на что-то",
+                category: "verb"
+            },
+            {
+                word: "establish",
+                pronunciation: "/istæblıʃ/",
+                partOfSpeech: "verb",
+                translation: "основывать, учреждать",
+                category: "verb"
+            },
+            {
+                word: "filter",
+                pronunciation: "/fıltə/",
+                partOfSpeech: "verb",
+                translation: "фильтровать, отбирать (о новостях / информации)",
+                category: "verb"
+            },
+            {
+                word: "filth",
+                pronunciation: "/fılθ/",
+                partOfSpeech: "noun",
+                translation: "грязь",
+                category: "noun"
+            },
+            {
+                word: "issue",
+                pronunciation: "/ısju:/",
+                partOfSpeech: "noun",
+                translation: "проблема",
+                category: "noun"
+            },
+            {
+                word: "lack",
+                pronunciation: "/læk/",
+                partOfSpeech: "noun",
+                translation: "недостаток",
+                category: "noun"
+            },
+            {
+                word: "linen",
+                pronunciation: "/lının/",
+                partOfSpeech: "noun",
+                translation: "белье",
+                category: "noun"
+            },
+            {
+                word: "literally",
+                pronunciation: "/lıtərəli/",
+                partOfSpeech: "adverb",
+                translation: "буквально, дословно",
+                example: "He literally ran 100 km in one day.",
+                category: "adv"
+            },
+            {
+                word: "medical supplies",
+                pronunciation: "/medıkəl səplaız/",
+                partOfSpeech: "noun",
+                translation: "медикаменты; медицинское оборудование",
+                category: "noun"
+            },
+            {
+                word: "rotten",
+                pronunciation: "/rɒtn/",
+                partOfSpeech: "adjective",
+                translation: "прогнивший",
+                category: "adj"
+            },
+            {
+                word: "scrubbing brush",
+                pronunciation: "/skrʌbıŋ brʌʃ/",
+                partOfSpeech: "noun",
+                translation: "жесткая щетка",
+                category: "noun"
+            },
+            {
+                word: "sewage",
+                pronunciation: "/su:ıdʒ/",
+                partOfSpeech: "noun",
+                translation: "нечистоты",
+                category: "noun"
+            },
+            {
+                word: "sponge",
+                pronunciation: "/spʌndʒ/",
+                partOfSpeech: "noun",
+                translation: "губка",
+                category: "noun"
+            },
+            {
+                word: "state",
+                pronunciation: "/steit/",
+                partOfSpeech: "noun",
+                translation: "состояние",
+                category: "noun"
+            },
+            {
+                word: "supplies",
+                pronunciation: "/səplaız/",
+                partOfSpeech: "noun",
+                translation: "оборудование",
+                category: "noun"
+            },
+            {
+                word: "unsanitary",
+                pronunciation: "/ʌnsænıtəri/",
+                partOfSpeech: "noun",
+                translation: "антисанитария",
+                category: "noun"
+            },
+            {
+                word: "unventilated",
+                pronunciation: "/ʌnventıleıtıd/",
+                partOfSpeech: "adjective",
+                translation: "непроветриваемый",
+                category: "adj"
+            },
+            {
+                word: "volunteer",
+                pronunciation: "/vɒləntıə/",
+                partOfSpeech: "verb",
+                translation: "пойти добровольцем; добровольно поступить на службу",
+                category: "verb"
+            },
+            {
+                word: "around the clock",
+                pronunciation: "",
+                partOfSpeech: "phrase",
+                translation: "круглые сутки",
+                example: "Doctors worked around the clock to save lives.",
+                category: "noun"
+            }
+        ];
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardsContainer = document.getElementById('cards-container');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const flippedCountElement = document.getElementById('flipped-count');
+            let flippedCount = 0;
+            
+            // Отображение всех карточек при загрузке
+            renderCards(wordsData);
+            
+            // Обработчики событий для фильтрации
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Убираем активный класс у всех кнопок
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    if (filter === 'all') {
+                        renderCards(wordsData);
+                    } else {
+                        const filteredWords = wordsData.filter(word => word.category === filter);
+                        renderCards(filteredWords);
+                    }
+                });
+            });
+            
+            // Функция для отображения карточек
+            function renderCards(words) {
+                cardsContainer.innerHTML = '';
+                
+                words.forEach((wordData, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.dataset.index = index;
+                    
+                    // Определяем иконку в зависимости от части речи
+                    let icon = 'fas fa-font';
+                    if (wordData.partOfSpeech === 'noun') icon = 'fas fa-landmark';
+                    if (wordData.partOfSpeech === 'verb') icon = 'fas fa-bolt';
+                    if (wordData.partOfSpeech === 'adjective') icon = 'fas fa-palette';
+                    if (wordData.partOfSpeech === 'adverb') icon = 'fas fa-tachometer-alt';
+                    if (wordData.partOfSpeech === 'phrase') icon = 'fas fa-quote-right';
+                    
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="word">${wordData.word}</div>
+                                <div class="pronunciation">${wordData.pronunciation}</div>
+                                <div class="part-of-speech"><i class="${icon}"></i> ${wordData.partOfSpeech}</div>
+                                <div class="hint">Нажмите, чтобы увидеть перевод</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="translation">${wordData.translation}</div>
+                                <div class="part-of-speech"><i class="${icon}"></i> ${wordData.partOfSpeech}</div>
+                                ${wordData.example ? `<div class="example">Пример: ${wordData.example}</div>` : ''}
+                                <div class="hint">Нажмите, чтобы вернуться</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Добавляем обработчик события для переворота карточки
+                    card.addEventListener('click', function() {
+                        this.classList.toggle('flipped');
+                        
+                        // Увеличиваем счетчик перевернутых карточек
+                        if (!this.classList.contains('counted')) {
+                            flippedCount++;
+                            flippedCountElement.textContent = flippedCount;
+                            this.classList.add('counted');
+                        }
+                    });
+                    
+                    cardsContainer.appendChild(card);
+                });
+            }
+            
+            // Инициализируем счетчик перевернутых карточек
+            flippedCountElement.textContent = flippedCount;
+        });
+    </script>
+</body>
+</html>
